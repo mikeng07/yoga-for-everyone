@@ -2,88 +2,82 @@
 
 ---
 
-## M1: UI Shell — Upload screen visible in browser
-- [ ] 1.1 Create project structure (`frontend/index.html`, `style.css`, `app.js`, `backend/main.py`)
-  - **Verify:** Open `index.html` in browser — page loads with no console errors
-- [ ] 1.2 Build upload view — drag-drop zone, tagline, "Generate My Yoga Plan" button
-  - **Verify:** Upload zone is centered on screen; button is visible and styled
-- [ ] 1.3 Build results view skeleton — diagnosis card + 3 pose card placeholders (hardcoded, hidden)
-  - **Verify:** Temporarily show results view in JS → diagnosis card and pose cards render correctly
-- [ ] 1.4 Wire view transitions — upload → loading spinner → results
-  - **Verify:** Click button → loading spinner appears → results view appears (with mock data)
+## M1: UI Shell — Upload screen visible in browser ✅
+- [x] 1.1 Create project structure
+- [x] 1.2 Build upload view
+- [x] 1.3 Build results view skeleton
+- [x] 1.4 Wire view transitions
 
 ---
 
-## M2: Backend scaffold + PDF upload
-- [ ] 2.1 FastAPI app with CORS + `GET /health` endpoint
-  - **Verify:** Run `uvicorn main:app` → `curl http://localhost:8000/health` returns `{"status": "ok"}`
-- [ ] 2.2 `POST /api/analyze-note` returns hardcoded mock yoga plan JSON
-  - **Verify:** `curl -X POST /api/analyze-note -F "file=@test.pdf"` → mock JSON returned in terminal
-- [ ] 2.3 Frontend sends PDF to backend, displays mock yoga plan in results view
-  - **Verify:** Upload any PDF → diagnosis card shows mock text + 3 pose cards appear with mock names
+## M2: Backend scaffold + PDF upload ✅
+- [x] 2.1 FastAPI app with CORS + `GET /health` endpoint
+- [x] 2.2 `POST /api/analyze-note` returns mock yoga plan JSON
+- [x] 2.3 Frontend sends PDF to backend, displays mock yoga plan
 
 ---
 
-## M3: Gemini PDF parsing — real yoga plan
-- [ ] 3.1 Integrate Gemini File API — upload PDF and pass to Gemini in backend
-  - **Verify:** Backend logs show Gemini raw response for a real doctor note PDF
-- [ ] 3.2 Parse Gemini JSON response, return structured yoga plan from `/api/analyze-note`
-  - **Verify:** Upload a real doctor note PDF → diagnosis summary and pose names on screen match the note content
-- [ ] 3.3 Display diagnosis summary + contraindications in the diagnosis card
-  - **Verify:** Diagnosis card shows the actual condition name and a list of movements to avoid
+## M3: Gemini PDF parsing — real yoga plan ✅
+- [x] 3.1 Integrate Gemini File API
+- [x] 3.2 Parse Gemini JSON response, return structured yoga plan
+- [x] 3.3 Display diagnosis summary + contraindications
 
 ---
 
-## M4: Veo video generation — yoga videos per pose
-- [ ] 4.1 `POST /api/generate-video` endpoint wired to Veo API (with polling loop)
-  - **Verify:** Call endpoint manually with a sample prompt → terminal shows polling logs → video URL returned
-- [ ] 4.2 Frontend fires video requests in parallel for all poses after plan loads
-  - **Verify:** Network tab shows multiple `/api/generate-video` requests firing simultaneously
-- [ ] 4.3 Videos load progressively — each pose card shows shimmer skeleton, then video player appears
-  - **Verify:** Watch the results page — pose cards fill in with video players one-by-one as Veo completes
-- [ ] 4.4 Error fallback — if a video fails, pose card shows a placeholder image (not broken)
-  - **Verify:** Manually kill one video request → that card shows a calm placeholder, others still work
+## M4: Veo video generation ✅
+- [x] 4.1 `POST /api/generate-video` endpoint wired to Veo API
+- [x] 4.2 Frontend fires video requests in parallel
+- [x] 4.3 Videos load progressively with shimmer skeleton
+- [x] 4.4 Error fallback via Imagen illustration
 
 ---
 
-## M5: Polish + demo prep
-- [ ] 5.1 UI polish — wellness color palette, typography, smooth transitions, mobile responsive
-  - **Verify:** Open on mobile viewport in DevTools → layout looks clean, no overflow
-- [ ] 5.2 Error handling — invalid file type, backend down, Gemini failure
-  - **Verify:** Upload a `.txt` file → friendly error message appears (not a console crash)
-- [ ] 5.3 Demo prep — 3 sample doctor note PDFs tested end-to-end, full flow works reliably
-  - **Verify:** Run full flow with each sample note → yoga plan + at least 2 videos generate successfully
+## M5: Patient context form — two-column upload view
+- [ ] 5.1 Redesign upload view — two columns (left: patient form, right: PDF upload)
+  - **Verify:** Upload view shows two side-by-side panels on desktop — form on left, drop zone on right
+- [ ] 5.2 Patient form fields — gender, height, weight, pain level (1–10), description
+  - **Verify:** All fields render correctly; pain level shows as a 1–10 slider with current value displayed
+- [ ] 5.3 Pass patient context + PDF to backend, include in Gemini prompt
+  - **Verify:** Upload PDF + fill form → diagnosis card and poses reflect the patient's pain level and description
 
 ---
 
----
-
-## M6 (Optional): Pose illustrations via Imagen
+## M6: Pose card redesign — image + video side by side
 - [ ] 6.1 `POST /api/generate-image` endpoint wired to Imagen API
-  - **Verify:** Call endpoint with a sample pose prompt → image URL returned in terminal
-- [ ] 6.2 Frontend requests pose image in parallel with video; image shows immediately while video loads
-  - **Verify:** Results page shows a generated illustration in each pose card before the video arrives
-- [ ] 6.3 Image acts as video poster frame — replaced by video player once Veo completes
-  - **Verify:** Pose card shows Imagen illustration → seamlessly transitions to video player when ready
+  - **Verify:** `curl` the endpoint → base64 image returned in terminal
+- [ ] 6.2 Pose card layout — image on left, video thumbnail on right (click to play)
+  - **Verify:** Results page shows pose cards with image placeholder left + video placeholder right
+- [ ] 6.3 Images load progressively into left slot as Imagen completes
+  - **Verify:** Left slots fill in with generated illustrations one by one
+- [ ] 6.4 Videos load into right slot; click to play (no autoplay)
+  - **Verify:** Right slot fills in with video; clicking it starts playback
+- [ ] 6.5 If video fails after all others loaded, auto-retry once
+  - **Verify:** Simulate a slow video — after others complete, failed card retries and video appears
 
 ---
 
-## M7 (Optional): Background music via Lyria
-- [ ] 7.1 `POST /api/generate-music` endpoint wired to Lyria API
-  - **Verify:** Call endpoint → calming music audio URL returned in terminal
-- [ ] 7.2 Music auto-plays softly when results view loads (muted by default, user unmutes)
-  - **Verify:** Results page loads → music toggle button visible in corner; clicking it starts calm background audio
-- [ ] 7.3 Music toggle (on/off) with smooth fade in/out
-  - **Verify:** Toggle music on → audio fades in; toggle off → audio fades out gracefully
+## M7: Polish + demo prep
+- [ ] 7.1 UI polish — typography, spacing, transitions
+  - **Verify:** Overall layout looks clean and professional
+- [ ] 7.2 Error handling — invalid file type, missing form fields, backend down
+  - **Verify:** Upload a `.txt` file → friendly error message, no crash
+- [ ] 7.3 Demo prep — 3 sample doctor notes tested end-to-end
+  - **Verify:** Full flow works reliably with each sample note
+
+---
+
+## M8 (Optional): Background music via Lyria
+- [ ] 8.1 `POST /api/generate-music` endpoint wired to Lyria API
+- [ ] 8.2 Music plays softly when results load, toggle on/off
+  - **Verify:** Music toggle in corner → clicking starts/stops background audio with fade
 
 ---
 
 ## Cut Line
 
-If time is short, ship in this order of priority:
+If time is short, ship in this order:
 
-1. **Must have:** PDF upload → Gemini diagnosis card displayed (M1–M3)
-2. **Core demo:** At least 1 Veo video generated and playing (M4.1–M4.3, single pose)
-3. **Nice to have:** All poses with progressive video loading + polish (M4.4, M5)
-4. **Bonus:** Imagen pose illustrations (M6) — high visual impact, relatively quick to add
-5. **Bonus:** Lyria background music (M7) — nice atmosphere for demo, lowest priority
+1. **Must have:** PDF upload + patient form → Gemini plan displayed (M1–M5)
+2. **Core demo:** Images + at least 1 video per pose (M6.1–M6.4)
+3. **Nice to have:** Video retry logic + polish (M6.5, M7)
+4. **Bonus:** Lyria music (M8)

@@ -14,6 +14,13 @@ function showView(view) {
   view.hidden = false;
 }
 
+// Pain slider — update displayed value as user drags
+const painSlider = document.getElementById('pain-level');
+const painValue  = document.getElementById('pain-value');
+painSlider.addEventListener('input', () => {
+  painValue.textContent = painSlider.value;
+});
+
 // File input — show selected filename
 const fileInput = document.getElementById('file-input');
 const fileName  = document.getElementById('file-name');
@@ -28,15 +35,23 @@ const generateBtn = document.getElementById('generate-btn');
 
 generateBtn.addEventListener('click', async () => {
   const file = fileInput.files[0];
-  if (!file) {
-    alert('Please select a PDF file first.');
+  const description = document.getElementById('description').value;
+
+  if (!file && !description) {
+    alert('Please upload a doctor\'s note or describe your symptoms.');
     return;
   }
 
   showView(loadingView);
 
   const formData = new FormData();
-  formData.append('file', file);
+  if (file) formData.append('file', file);
+  formData.append('gender',      document.getElementById('gender').value);
+  formData.append('age',         document.getElementById('age').value);
+  formData.append('height',      document.getElementById('height').value);
+  formData.append('weight',      document.getElementById('weight').value);
+  formData.append('pain_level',  document.getElementById('pain-level').value);
+  formData.append('description', document.getElementById('description').value);
 
   const response = await fetch('http://localhost:8000/api/analyze-note', {
     method: 'POST',

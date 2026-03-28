@@ -1,5 +1,6 @@
 # YogaRx backend — routes added as we build
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Form
+from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -23,9 +24,25 @@ def health():
 
 
 @app.post("/api/analyze-note")
-async def analyze_note(file: UploadFile = File(...)):
-    pdf_bytes = await file.read()
-    plan = analyze_doctor_note(pdf_bytes)
+async def analyze_note(
+    file:        Optional[UploadFile] = File(None),
+    gender:      str = Form(""),
+    age:         str = Form(""),
+    height:      str = Form(""),
+    weight:      str = Form(""),
+    pain_level:  str = Form("5"),
+    description: str = Form(""),
+):
+    pdf_bytes = await file.read() if file else None
+    context = {
+        "gender": gender,
+        "age": age,
+        "height_ft": height,
+        "weight_lbs": weight,
+        "pain_level": pain_level,
+        "description": description,
+    }
+    plan = analyze_doctor_note(pdf_bytes, context)
     return plan
 
 

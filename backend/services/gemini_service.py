@@ -10,13 +10,15 @@ client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 PROMPT = """
 You are a certified yoga therapist and physiotherapy assistant.
-A patient has uploaded their doctor's note. Analyze it carefully and:
+A patient has shared their profile and may have uploaded their doctor's note. Analyze carefully and:
 
-1. Extract the primary back/spine diagnosis
+1. Extract the primary diagnosis — this may involve the back, spine, neck, or a combination
 2. Identify any contraindications or movements to avoid
-3. Generate a safe, personalized yoga sequence of 4-6 poses
+3. Generate a safe, personalized yoga sequence of 4-6 poses that targets the affected areas
 
 Rules:
+- If the diagnosis or patient description mentions neck issues, include neck-specific poses
+- If both back and neck are affected, include poses that address both areas
 - Only recommend poses safe for the specific diagnosis
 - Explicitly avoid poses that could worsen the condition
 - Keep instructions clear and accessible for beginners
@@ -42,25 +44,43 @@ Return this exact JSON structure:
 }
 """
 
-def analyze_doctor_note(pdf_bytes: bytes) -> dict:
-    # Write bytes to a temp file — Gemini File API requires a file path
-    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
-        tmp.write(pdf_bytes)
-        tmp_path = tmp.name
+def build_prompt(context: dict) -> str:
+    patient_info = f"""
+Patient profile:
+- Gender: {context.get('gender') or 'not specified'}
+- Age: {context.get('age') or 'not specified'}
+- Height: {context.get('height_ft') or 'not specified'} ft
+- Weight: {context.get('weight_lbs') or 'not specified'} lbs
+- Current pain level: {context.get('pain_level', '5')}/10
+- How they feel: {context.get('description') or 'not provided'}
 
-    # Upload the temp file to Gemini File API
-    uploaded_file = client.files.upload(
-        file=tmp_path,
-        config={"mime_type": "application/pdf"},
-    )
-    os.unlink(tmp_path)  # clean up temp file
+Use this profile to personalise the yoga sequence — adjust intensity and pose difficulty based on pain level (higher pain = gentler poses, shorter holds).
+"""
+    return patient_info + PROMPT
 
-    # Ask Gemini to generate a structured yoga plan
+
+def analyze_doctor_note(pdf_bytes: bytes | None, context: dict = {}) -> dict:
+    prompt = build_prompt(context)
+
+    if pdf_bytes:
+        # Upload PDF and pass it alongside the prompt
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
+            tmp.write(pdf_bytes)
+            tmp_path = tmp.name
+        uploaded_file = client.files.upload(
+            file=tmp_path,
+            config={"mime_type": "application/pdf"},
+        )
+        os.unlink(tmp_path)
+        contents = [uploaded_file, prompt]
+    else:
+        # No PDF — work from patient profile only
+        contents = [prompt]
+
     response = client.models.generate_content(
         model="gemini-3-flash-preview",
-        contents=[uploaded_file, PROMPT],
+        contents=contents,
     )
 
-    # Strip markdown code fences if Gemini wraps the JSON in ```json ... ```
     text = response.text.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
     return json.loads(text)
