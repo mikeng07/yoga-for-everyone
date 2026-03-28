@@ -79,10 +79,9 @@ async function requestImage(pose) {
     });
     const data = await response.json();
 
-    // Only show image if the video hasn't already arrived
-    const slot = document.getElementById(`video-${pose.pose_number}`);
+    const slot = document.getElementById(`image-front-${pose.pose_number}`);
     if (slot && data.image_url) {
-      slot.outerHTML = `<img class="pose-image" id="image-${pose.pose_number}" src="${data.image_url}" />`;
+      slot.outerHTML = `<img class="pose-image" id="image-front-${pose.pose_number}" src="${data.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />`;
     }
   } catch {
     // Image failed silently — video may still arrive
@@ -90,28 +89,37 @@ async function requestImage(pose) {
 }
 
 // Request a video — replaces image (or shimmer) when ready
-async function requestVideo(pose) {
-  try {
-    const response = await fetch('http://localhost:8000/api/generate-video', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: pose.veo_prompt }),
-    });
-    const data = await response.json();
+const VIDEO_TIMEOUT_MS = 150000; // 2m 30s
 
-    if (data.video_url) {
-      // Replace shimmer or image — whichever is currently showing
-      const slot = document.getElementById(`video-${pose.pose_number}`)
-                || document.getElementById(`image-${pose.pose_number}`);
-      if (slot) {
-        slot.outerHTML = `<video class="pose-video" src="${data.video_url}" controls autoplay loop muted></video>`;
-      }
+async function fetchVideo(pose) {
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('timeout')), VIDEO_TIMEOUT_MS)
+  );
+  const request = fetch('http://localhost:8000/api/generate-video', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt: pose.veo_prompt }),
+  }).then(r => r.json());
+
+  return Promise.race([request, timeout]);
+}
+
+async function requestVideo(pose, isRetry = false) {
+  try {
+    const data = await fetchVideo(pose);
+    const slot = document.getElementById(`video-back-${pose.pose_number}`);
+    if (slot && data.video_url) {
+      slot.outerHTML = `<video id="video-back-${pose.pose_number}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" src="${data.video_url}" autoplay loop muted playsinline></video>`;
     }
   } catch {
-    // If video failed and no image shown yet, show fallback message
-    const slot = document.getElementById(`video-${pose.pose_number}`);
-    if (slot) {
-      slot.outerHTML = `<div class="video-error">🧘 Video unavailable for this pose</div>`;
+    if (!isRetry) {
+      console.log(`Pose ${pose.pose_number} video timed out — retrying...`);
+      requestVideo(pose, true);
+    } else {
+      const slot = document.getElementById(`video-back-${pose.pose_number}`);
+      if (slot) {
+        slot.outerHTML = `<div class="video-error" id="video-back-${pose.pose_number}">🧘 Video unavailable</div>`;
+      }
     }
   }
 }
@@ -140,7 +148,19 @@ function renderPlan(plan) {
           <p class="sanskrit">${pose.sanskrit}</p>
         </div>
       </div>
-      <div class="video-placeholder" id="video-${pose.pose_number}">Video loading...</div>
+
+      <div class="flip-card" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="video-placeholder" id="image-front-${pose.pose_number}"></div>
+            <span class="flip-hint">▶ Tap for video</span>
+          </div>
+          <div class="flip-card-back">
+            <div class="video-placeholder" id="video-back-${pose.pose_number}"></div>
+          </div>
+        </div>
+      </div>
+
       <p class="pose-instruction">${pose.instruction}</p>
       <div class="pose-footer">
         <span class="benefit">${pose.benefit}</span>
