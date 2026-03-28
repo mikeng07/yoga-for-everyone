@@ -1,0 +1,284 @@
+/* YogaRx styles — filled in as we build */
+
+/* Ensure hidden attribute always wins over display rules */
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background-color: #f0f7f4;
+  color: #2d4a3e;
+}
+
+/* ── Upload View ── */
+#upload-view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.upload-container {
+  text-align: center;
+  max-width: 480px;
+  padding: 2rem;
+}
+
+.upload-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: #1a7a5e;
+}
+
+.tagline {
+  color: #5a7a6e;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.drop-zone {
+  border: 2px dashed #7abfab;
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  background: #ffffff;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+}
+
+.drop-icon {
+  font-size: 2.5rem;
+}
+
+.drop-zone p {
+  margin: 0.5rem 0;
+  color: #5a7a6e;
+}
+
+.drop-sub {
+  font-size: 0.85rem;
+  color: #9ab8ae;
+}
+
+.file-label {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.4rem 1.2rem;
+  background: #e6f4ef;
+  border: 1px solid #7abfab;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #1a7a5e;
+}
+
+.file-name {
+  font-size: 0.85rem;
+  color: #9ab8ae;
+  margin-top: 0.75rem;
+}
+
+.generate-btn {
+  width: 100%;
+  padding: 0.9rem;
+  background: #1a7a5e;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.generate-btn:hover {
+  background: #155f49;
+}
+
+/* ── Loading View ── */
+#loading-view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.loading-container {
+  text-align: center;
+  color: #5a7a6e;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #c8e6de;
+  border-top-color: #1a7a5e;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Results View ── */
+.results-container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.diagnosis-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-left: 4px solid #1a7a5e;
+}
+
+.diagnosis-card h2 {
+  margin: 0 0 0.5rem;
+  color: #1a7a5e;
+}
+
+.diagnosis-text {
+  margin: 0 0 1rem;
+  color: #2d4a3e;
+}
+
+.contraindications {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: bold;
+  color: #c0392b;
+  font-size: 0.9rem;
+}
+
+.tag {
+  background: #fdecea;
+  color: #c0392b;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.poses-heading {
+  color: #1a7a5e;
+  margin-bottom: 1rem;
+}
+
+.poses-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pose-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.pose-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pose-number {
+  background: #1a7a5e;
+  color: white;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.pose-header h3 {
+  margin: 0;
+  color: #2d4a3e;
+}
+
+.sanskrit {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #9ab8ae;
+  font-style: italic;
+}
+
+.video-placeholder {
+  border-radius: 8px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7abfab;
+  margin-bottom: 1rem;
+  background: linear-gradient(90deg, #e6f4ef 25%, #c8e6de 50%, #e6f4ef 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.pose-video {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.pose-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: block;
+  object-fit: cover;
+}
+
+.video-error {
+  background: #f0f7f4;
+  border-radius: 8px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ab8ae;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.pose-instruction {
+  color: #5a7a6e;
+  margin: 0 0 0.75rem;
+  line-height: 1.5;
+}
+
+.pose-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.benefit {
+  background: #e6f4ef;
+  color: #1a7a5e;
+  padding: 0.2rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.duration {
+  font-size: 0.85rem;
+  color: #9ab8ae;
+}

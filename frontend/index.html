@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YogaRx</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Upload View -->
+    <div id="upload-view">
+      <div class="upload-container">
+        <h1>YogaRx</h1>
+        <p class="tagline">Upload your doctor's note — get a personalized yoga plan for your back.</p>
+
+        <div class="drop-zone" id="drop-zone">
+          <span class="drop-icon">📄</span>
+          <p>Drag & drop your PDF here</p>
+          <p class="drop-sub">or</p>
+          <label class="file-label" for="file-input">Choose File</label>
+          <input type="file" id="file-input" accept=".pdf" hidden />
+          <p class="file-name" id="file-name">No file selected</p>
+        </div>
+
+        <button class="generate-btn" id="generate-btn">Generate My Yoga Plan</button>
+      </div>
+    </div>
+
+    <!-- Loading View (hidden by default) -->
+    <div id="loading-view" hidden>
+      <div class="loading-container">
+        <div class="spinner"></div>
+        <p>Analyzing your doctor's note...</p>
+      </div>
+    </div>
+
+    <!-- Results View (hidden by default, populated by JS) -->
+    <div id="results-view" hidden>
+      <div class="results-container">
+        <div id="diagnosis-card" class="diagnosis-card"></div>
+        <h2 class="poses-heading">Your Yoga Plan</h2>
+        <div id="poses-grid" class="poses-grid"></div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
