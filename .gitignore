@@ -2,6 +2,10 @@
 backend/.env
 .env
 
+# Docs and internal notes
+*.md
+memory/
+
 # Python
 __pycache__/
 *.py[cod]
