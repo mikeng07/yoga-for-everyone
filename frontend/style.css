@@ -408,3 +408,118 @@ body {
   font-size: 0.85rem;
   color: #9ab8ae;
 }
+
+/* ── Schedule Section ── */
+.schedule-section {
+  margin-top: 2.5rem;
+  text-align: center;
+  padding-bottom: 3rem;
+}
+
+.schedule-btn {
+  padding: 0.9rem 2rem;
+  background: #1a7a5e;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.schedule-btn:hover {
+  background: #155f49;
+}
+
+.level-selector {
+  text-align: center;
+}
+
+.level-selector h3 {
+  color: #1a7a5e;
+  margin-bottom: 1rem;
+}
+
+.level-options {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.level-btn {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #1a7a5e;
+  background: white;
+  color: #1a7a5e;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.level-btn:hover {
+  background: #e6f4ef;
+}
+
+.schedule-loading {
+  text-align: center;
+  color: #5a7a6e;
+}
+
+.schedule-heading {
+  color: #1a7a5e;
+  margin-bottom: 1.5rem;
+}
+
+.week-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.week-title {
+  color: #1a7a5e;
+  margin: 0 0 1rem;
+}
+
+.session {
+  margin-bottom: 1rem;
+}
+
+.session-day {
+  margin: 0 0 0.5rem;
+  color: #2d4a3e;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.session-time {
+  font-size: 0.8rem;
+  color: #9ab8ae;
+  font-weight: normal;
+}
+
+.session-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.session-table th {
+  text-align: left;
+  color: #9ab8ae;
+  font-weight: 500;
+  padding: 0.3rem 0.5rem;
+  border-bottom: 1px solid #e6f4ef;
+}
+
+.session-table td {
+  padding: 0.4rem 0.5rem;
+  color: #2d4a3e;
+  border-bottom: 1px solid #f0f7f4;
+}
+
+.note {
+  color: #7abfab;
+  font-style: italic;
+}

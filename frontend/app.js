@@ -62,11 +62,18 @@ generateBtn.addEventListener('click', async () => {
   renderPlan(plan);
   showView(resultsView);
 
+  // Store plan globally so the schedule builder can access it
+  window.currentPlan = plan;
+  window.currentPainLevel = document.getElementById('pain-level').value;
+
   // Fire image AND video requests in parallel for every pose
   plan.poses.forEach(pose => {
     requestImage(pose);
     requestVideo(pose);
   });
+
+  // Wire schedule button
+  document.getElementById('schedule-btn').addEventListener('click', showLevelSelector);
 });
 
 // Request an image — shows quickly while video is still generating
@@ -168,4 +175,70 @@ function renderPlan(plan) {
       </div>
     </div>
   `).join('');
+}
+
+// Show level selector when schedule button clicked
+function showLevelSelector() {
+  const section = document.getElementById('schedule-section');
+  section.innerHTML = `
+    <div class="level-selector">
+      <h3>Choose your progression level</h3>
+      <div class="level-options">
+        <button class="level-btn" onclick="buildSchedule('Gentle')">🌱 Gentle</button>
+        <button class="level-btn" onclick="buildSchedule('Moderate')">🔥 Moderate</button>
+        <button class="level-btn" onclick="buildSchedule('Progressive')">⚡ Progressive</button>
+      </div>
+    </div>
+  `;
+}
+
+// Call backend to generate schedule, then render it
+async function buildSchedule(level) {
+  const section = document.getElementById('schedule-section');
+  section.innerHTML = `<p class="schedule-loading">Generating your ${level} 4-week plan...</p>`;
+
+  const response = await fetch('http://localhost:8000/api/generate-schedule', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      poses: window.currentPlan.poses,
+      level: level,
+      pain_level: window.currentPainLevel,
+    }),
+  });
+  const schedule = await response.json();
+  renderSchedule(schedule);
+}
+
+// Render the 4-week plan inline
+function renderSchedule(schedule) {
+  const section = document.getElementById('schedule-section');
+  section.innerHTML = `
+    <h2 class="schedule-heading">📅 Your ${schedule.level} 4-Week Plan</h2>
+    ${schedule.weeks.map(week => `
+      <div class="week-card">
+        <h3 class="week-title">Week ${week.week} — ${week.theme}</h3>
+        ${week.sessions.map(session => `
+          <div class="session">
+            <h4 class="session-day">${session.day} <span class="session-time">${session.total_minutes} min</span></h4>
+            <table class="session-table">
+              <thead><tr><th>Pose</th><th>Sets</th><th>Reps</th><th>Hold</th><th>Note</th></tr></thead>
+              <tbody>
+                ${session.poses.map(p => `
+                  <tr>
+                    <td>${p.name}</td>
+                    <td>${p.sets}</td>
+                    <td>${p.reps || '—'}</td>
+                    <td>${p.hold_seconds}s</td>
+                    <td class="note">${p.note || ''}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `).join('')}
+      </div>
+    `).join('')}
+    <button class="schedule-btn" style="margin-top:1rem" onclick="showLevelSelector()">↩ Change Level</button>
+  `;
 }

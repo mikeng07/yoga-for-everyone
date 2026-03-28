@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from services.gemini_service import analyze_doctor_note
 from services.veo_service import generate_yoga_video
 from services.imagen_service import generate_pose_image
+from services.schedule_service import generate_schedule
 
 app = FastAPI()
 
@@ -50,6 +51,11 @@ class VideoRequest(BaseModel):
     prompt: str
     duration_seconds: int = 5
 
+class ScheduleRequest(BaseModel):
+    poses: list
+    level: str
+    pain_level: str = "5"
+
 
 @app.post("/api/generate-image")
 def generate_image(req: VideoRequest):
@@ -58,6 +64,16 @@ def generate_image(req: VideoRequest):
         return {"image_url": image_url}
     except Exception as e:
         print(f"Image generation failed: {e}")
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+
+@app.post("/api/generate-schedule")
+def generate_schedule_endpoint(req: ScheduleRequest):
+    try:
+        schedule = generate_schedule(req.poses, req.level, req.pain_level)
+        return schedule
+    except Exception as e:
+        print(f"Schedule generation failed: {e}")
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 
