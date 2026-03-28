@@ -1,12 +1,19 @@
 /* YogaRx styles — filled in as we build */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 /* Ensure hidden attribute always wins over display rules */
 [hidden] { display: none !important; }
+
 body {
   margin: 0;
-  font-family: sans-serif;
+  font-family: 'Inter', sans-serif;
   background-color: #f0f7f4;
   color: #2d4a3e;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 /* ── Upload View ── */
@@ -183,6 +190,12 @@ body {
 .loading-container {
   text-align: center;
   color: #5a7a6e;
+}
+
+.loading-sub {
+  font-size: 0.85rem;
+  color: #9ab8ae;
+  margin-top: 0;
 }
 
 .spinner {

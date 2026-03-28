@@ -44,6 +44,7 @@ generateBtn.addEventListener('click', async () => {
 
   showView(loadingView);
 
+  let plan;
   const formData = new FormData();
   if (file) formData.append('file', file);
   formData.append('gender',      document.getElementById('gender').value);
@@ -53,11 +54,17 @@ generateBtn.addEventListener('click', async () => {
   formData.append('pain_level',  document.getElementById('pain-level').value);
   formData.append('description', document.getElementById('description').value);
 
-  const response = await fetch('http://localhost:8000/api/analyze-note', {
-    method: 'POST',
-    body: formData,
-  });
-  const plan = await response.json();
+  try {
+    const response = await fetch('http://localhost:8000/api/analyze-note', {
+      method: 'POST',
+      body: formData,
+    });
+    plan = await response.json();
+  } catch {
+    showView(uploadView);
+    alert('Could not reach the server. Make sure the backend is running.');
+    return;
+  }
 
   renderPlan(plan);
   showView(resultsView);
